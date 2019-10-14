@@ -1,11 +1,9 @@
 import os
 import csv
 import argparse
-import sys
-from pathlib import Path
 import hashlib
+import configparser
 from zipfile import ZipFile
-file_path = sys.argv[1]
 files = []
 
 
@@ -46,17 +44,23 @@ def csv_write(file_path, csv_name):
 
 def main():
     try:
+        """ConfigParser"""
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+
         """Argument Parser"""
         parser = argparse.ArgumentParser()
-        parser.add_argument("file_path", type=Path)
-        parser.add_argument("csv_name", type=str)
+        parser.add_argument("file_path", nargs='?')
+        parser.add_argument("csv_name", nargs='?')
         args = parser.parse_args()
 
-        if args.file_path.exists():
+        if args.file_path and args.csv_name:
             csv_write(args.file_path, args.csv_name)
         else:
-            raise Exception
-    except Exception as e:
+            """config.ini file ['section']['name]"""
+            csv_write(config['DEFAULT']['file_path'], config['DEFAULT']['csv_name'])
+
+    except IndexError:
         print("Error!")
 
 
