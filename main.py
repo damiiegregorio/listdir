@@ -3,9 +3,9 @@ import csv
 import argparse
 import sys
 from pathlib import Path
-
+import hashlib
+from zipfile import ZipFile
 file_path = sys.argv[1]
-
 files = []
 
 
@@ -16,25 +16,48 @@ def csv_write(file_path, csv_name):
             dir_path = os.path.abspath(r)
             name = os.path.basename(file)
             file_stat = os.path.getsize("{}\{}".format(r, file))
-            data = [dir_path, name, file_stat]
+            hash_path = os.path.abspath("{}\{}".format(r, file))
 
+            """Extract sha1 and md5"""
+            sha1_extractor = hashlib.sha1()
+            md5_extractor = hashlib.md5()
+
+            with open(hash_path, 'rb') as afile:
+                buf = afile.read()
+                sha1_extractor.update(buf)
+                md5_extractor.update(buf)
+                sha1 = sha1_extractor.hexdigest()
+                md5 = md5_extractor.hexdigest()
+
+            data = [dir_path, name, file_stat, sha1, md5]
+
+            """Create csv file"""
             with open(csv_name+".csv", 'a') as output_file:
                 writer = csv.writer(output_file, lineterminator='\r')
                 writer.writerow(data)
 
+            """Create zip file"""
+            with ZipFile(csv_name+".zip", 'w') as zipObj:
+                zipObj.write(csv_name+'.csv')
+
+    """Remove csv file"""
+    os.remove(csv_name+'.csv')
+
 
 def main():
-    """Argument Parser"""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("file_path", type=Path)
-    parser.add_argument("csv_name", type=str)
-    args = parser.parse_args()
+    try:
+        """Argument Parser"""
+        parser = argparse.ArgumentParser()
+        parser.add_argument("file_path", type=Path)
+        parser.add_argument("csv_name", type=str)
+        args = parser.parse_args()
 
-    if args.file_path.exists():
-        print("Path exists!")
-        csv_write(args.file_path, args.csv_name)
-    else:
-        print("Path does not exist.")
+        if args.file_path.exists():
+            csv_write(args.file_path, args.csv_name)
+        else:
+            raise Exception
+    except Exception as e:
+        print("Error!")
 
 
 if __name__ == "__main__":
