@@ -1,4 +1,4 @@
-# lisdir
+# lisdir-with-hashes
 
 New: 
 1. Added 2 new columns to the output: md5 and sha1
