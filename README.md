@@ -1,10 +1,16 @@
 # lisdir-with-hashes
 
 New: 
-1. Added 2 new columns to the output: md5 and sha1
-2. The output file is zipped
+1. Still supports the command line arguments for the value of the input directory and output file
+2. Added config.ini file 
 ____
 
 Command:
 
-python main.py <PATH> <CSV_NAME>
+python main.py 
+
+or
+
+python main.py <PATH_DIRECTORY> <CSV_NAME>
+
+
