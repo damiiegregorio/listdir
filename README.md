@@ -1,5 +1,5 @@
 # with-date-filename
-#### Version 1.1
+#### Version 1.2
 
 lisdir-with-hashes is a python module that can list the files, sha1 and md5 in a csv file of a recursive directory path. It also compresses the output csv file into a zip file. 
 
