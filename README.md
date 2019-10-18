@@ -1,4 +1,4 @@
-# lisdir
+# lisdir unit tests
 #### Version 1
 lisdir is a python module that can list the files of a recursive directory path.
 
