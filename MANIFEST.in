@@ -1,0 +1,4 @@
+include README.rst
+include listdir/*.ini
+include /*.txt
+include /*.md
