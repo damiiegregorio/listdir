@@ -20,9 +20,9 @@ class TestListDir(unittest.TestCase):
         sha1 = "51aa976f9114a6c458e5fe466cfd00ad0cae6450"
         assert listdir.extract_sha1(hash_path) == sha1
 
-    def test_csv_name(self):
-        csv_name = "output_test{}"
-        assert listdir.csv_file(test_name) == csv_name
+    def test_csv(self):
+        result = listdir.csv_write(file_path="C:\\Users\\TEU_USER\\listdir\\test\\test_directory", filename="test_output")
+        assert result is not None
 
 
 # if __name__ == '__main__':
