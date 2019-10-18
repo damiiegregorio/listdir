@@ -19,10 +19,13 @@ lisdir is a python module that can list the files of a recursive directory path.
 
 ### Running the program
 ```
-
 python main.py <PATH> <csv_name>
-
 ```
 
+### How to test
+
+```
+python -m pytest --cov=listdir test_listdir.py
+```
 ### Output
 ![alt text](https://github.com/damiiegregorio/listdir/blob/master/output_image.PNG)
