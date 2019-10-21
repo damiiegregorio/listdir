@@ -9,7 +9,6 @@ import logging
 import logging.config
 import yaml
 import json
-data_dict = []
 
 
 def setup_yaml():
@@ -70,13 +69,17 @@ def zip_file(filename):
     return zipObj
 
 
-def csv_file(filename, data):
+def csv_file(data, filename):
     with open(filename + ".csv", 'a', newline='') as output_file:
         writer = csv.writer(output_file, lineterminator='\r')
         writer.writerow(data)
+        return filename
 
 
 def json_file(file_path, csv_name):
+    data_list = []
+    data_dict = {"files": data_list}
+
     with open(csv_name+'.json', 'a') as json_file:
         for r, d, f in os.walk(file_path):
             for file in f:
@@ -94,9 +97,8 @@ def json_file(file_path, csv_name):
                     "md5": md5
                 }
                 logger.debug(data)
-                # data_dict.append(data)
-                # print(data_dict)
-                json.dump(data, json_file, indent=2)
+                data_list.append(data)
+        json.dump(data_dict, json_file, indent=2)
 
 
 def csv_write(file_path, filename):
