@@ -3,12 +3,139 @@ import csv
 import argparse
 import hashlib
 import configparser
-from zipfile import ZipFile
-from datetime import datetime
 import logging
 import logging.config
 import yaml
 import json
+import getpass
+import psycopg2
+from psycopg2 import sql
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+
+def create_db():
+    with open("config.yaml", 'rt') as f:
+        config = yaml.safe_load(f.read())
+    mysql = config['mysql']
+
+    pwd = getpass.getpass()
+    connection = psycopg2.connect(
+        user=mysql['user'],
+        password=pwd,
+        host=mysql['host'],
+        port=mysql['port'],
+    )
+
+    connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)  # <-- ADD THIS LINE
+
+    cur = connection.cursor()
+    cur.execute(sql.SQL("CREATE DATABASE {}").format(
+        sql.Identifier(mysql['db']))
+    )
+
+
+def create_table():
+    try:
+        with open("config.yaml", 'rt') as f:
+            config = yaml.safe_load(f.read())
+        mysql = config['mysql']
+
+        pwd = getpass.getpass()
+        connection = psycopg2.connect(
+            user=mysql['user'],
+            password=pwd,
+            host=mysql['host'],
+            port=mysql['port'],
+            database=mysql['db'],
+        )
+
+        # Create cursor
+        cursor = connection.cursor()
+
+        create_table_query = """
+        CREATE TABLE files
+            (ID       SERIAL  PRIMARY KEY     NOT NULL,
+            PATH              varchar         NOT NULL,
+            FILENAME          varchar         NOT NULL,
+            SIZE              int             NOT NULL,
+            SHA1              varchar         NOT NULL,
+            MD5               varchar         NOT NULL); 
+        """
+
+        cursor.execute(create_table_query)
+        connection.commit()
+        logger.info("Table created successfully in PostgreSQL")
+        logger.info("Please enter file path again.")
+
+    except (Exception, psycopg2.Error) as error:
+        logger.error("Error while connecting to PostgreSQL", error)
+
+
+def list_to_db(file_path):
+    try:
+        with open("config.yaml", 'rt') as f:
+            config = yaml.safe_load(f.read())
+        mysql = config['mysql']
+
+        pwd = getpass.getpass()
+        connection = psycopg2.connect(
+            user=mysql['user'],
+            password=pwd,
+            host=mysql['host'],
+            port=mysql['port'],
+            # database=mysql['db'],
+        )
+
+        cursor = connection.cursor()
+        logger.info("Connected to database.")
+        cursor.execute("select exists(SELECT datname FROM pg_catalog.pg_database WHERE datname = '{}');".format(mysql['db']))
+        db_exists = cursor.fetchone()[0]
+        print(db_exists)
+        if db_exists is False:
+            logger.info("Database does not exist. Enter your password to create a database.")
+            create_db()
+        else:
+            logger.info("Db exists")
+            cursor.execute("select exists(select * from information_schema.tables where table_name=%s)", ('files',))
+            table_exists = cursor.fetchone()[0]
+            logger.info(table_exists)
+            if table_exists is True:
+                logger.info("Table does not exist. Enter your password to create a table.")
+                create_table()
+            else:
+                logger.info("Preparing your data...")
+                connection = psycopg2.connect(
+                    user=mysql['user'],
+                    password=pwd,
+                    host=mysql['host'],
+                    port=mysql['port'],
+                    database=mysql['db'],
+                )
+                cursor = connection.cursor()
+
+                for r, d, f in os.walk(file_path):
+                    for file in f:
+                        dir_path = os.path.abspath(r)
+                        name = os.path.basename(file)
+                        file_stat = os.path.getsize("{}{}{}".format(r, os.sep, file))
+                        hash_path = os.path.abspath("{}{}{}".format(r, os.sep, file))
+                        sha1 = extract_sha1(hash_path)
+                        md5 = extract_md5(hash_path)
+                        data = [dir_path, name, file_stat, sha1, md5]
+                        logger.debug(data)
+
+                        postgres_insert_query = """
+                            INSERT INTO files
+                            (PATH, FILENAME, SIZE, SHA1, MD5)
+                            VALUES (%s,%s,%s,%s,%s)
+                        """
+                        record_to_insert = (dir_path, name, file_stat, sha1, md5)
+                        cursor.execute(postgres_insert_query, record_to_insert)
+                        connection.commit()
+                        logger.info("Record inserted successfully into file table")
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error while connecting to PostgreSQL", error)
 
 
 def setup_yaml():
@@ -55,32 +182,11 @@ def extract_md5(hash_path):
     return md5
 
 
-def date_today(csv_name):
-    today = datetime.now().strftime("_%Y%m%d_%I-%M_%p")
-    filename = csv_name + today
-    return filename
-
-
-def zip_file(filename):
-
-    zipped_file = filename + ".zip"
-    with ZipFile(zipped_file, 'w') as zipObj:
-        zipObj.write(filename + '.csv')
-    return zipObj
-
-
-def csv_file(data, filename):
-    with open(filename + ".csv", 'a', newline='') as output_file:
-        writer = csv.writer(output_file, lineterminator='\r')
-        writer.writerow(data)
-        return filename
-
-
-def json_file(file_path, csv_name):
+def json_file(file_path):
     data_list = []
     data_dict = {"files": data_list}
 
-    with open(csv_name+'.json', 'a') as json_file:
+    with open('output.json', 'a') as json_file:
         for r, d, f in os.walk(file_path):
             for file in f:
                 dir_path = os.path.abspath(r)
@@ -101,7 +207,7 @@ def json_file(file_path, csv_name):
         json.dump(data_dict, json_file, indent=2)
 
 
-def csv_write(file_path, filename):
+def csv_write(file_path):
     """CSV File writer"""
     for r, d, f in os.walk(file_path):
         for file in f:
@@ -112,14 +218,12 @@ def csv_write(file_path, filename):
             sha1 = extract_sha1(hash_path)
             md5 = extract_md5(hash_path)
             data = [dir_path, name, file_stat, sha1, md5]
-
             logger.debug(data)
 
             """Create csv file"""
-            csv_file(filename, data)
-
-            """Create zip file"""
-            zip_file(filename)
+            with open("output.csv", 'a', newline='') as output_file:
+                writer = csv.writer(output_file, lineterminator='\r')
+                writer.writerow(data)
 
 
 def main():
@@ -132,21 +236,34 @@ def main():
         """Argument Parser"""
         parser = argparse.ArgumentParser()
         group = parser.add_mutually_exclusive_group()
-        parser.add_argument("file_path", nargs='?')
-        parser.add_argument("csv_name", type=str)
+        parser.add_argument("file_path", nargs='?', help="File path",)
         group.add_argument("-j", "--json", help="Create a json file", action="store_true")
+        group.add_argument("-c", "--csv", help="Create a csv file", action="store_true")
+        group.add_argument("-d", "--database", help="Write to DB", action="store_true")
+        group.add_argument("-t", "--create", help="Create table", action="store_true")
         args = parser.parse_args()
 
         if args.file_path is None and args.csv_name is None:
             """config.ini file ['section']['name]"""
-            csv_write(config['DEFAULT']['file_path'], config['DEFAULT']['filename'])
-            print("------Action completed------")
+            csv_write(config['DEFAULT']['file_path'])
+            logger.info("CSV file created successfully..")
+        elif args.csv:
+            logger.info("Creating csv file...")
+            csv_write(args.file_path)
+            logger.info("CSV file created successfully.")
         elif args.json:
-            json_file(args.file_path, args.csv_name)
-            print("------Json file completed------")
+            logger.info("Creating json file...")
+            json_file(args.file_path)
+            logger.info("JSON file created successfully.")
+        elif args.database:
+            list_to_db(args.file_path)
+
+        elif args.create:
+            create_table()
         else:
-            csv_write(args.file_path, args.csv_name)
-            print("------Action completed------")
+            logger.info("Creating csv file...")
+            csv_write(args.file_path)
+            logger.info("CSV file created successfully.")
 
     except ValueError as e:
         print(e)
