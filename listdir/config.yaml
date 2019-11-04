@@ -1,6 +1,12 @@
 version: 1
 disable_existing_loggers: true
 
+mysql:
+    host: localhost
+    user: postgres
+    db: testdb2
+    port: 5432
+
 formatters:
   simple:
     format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
