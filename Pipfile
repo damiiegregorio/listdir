@@ -4,9 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = {version="*"}
+pytest = {version = "*"}
 
 [packages]
+psycopg2 = "*"
+pandas = "*"
+getpass = "*"
+os = "*"
+pyyaml = "*"
+json = "*"
+logging = "*"
+argparse = "*"
 
 [requires]
 python_version = "3.7"
