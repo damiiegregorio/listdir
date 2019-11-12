@@ -33,3 +33,32 @@ DEBUG:__main__:['C:\\Users\\TEU_USER\\PycharmProjects\\listdir\\.idea\\inspectio
 2019-10-21 15:06:52,794 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir\\.idea', 'vcs.xml', 185, 'd222c1e95ba289f2814d142867f8b3c8b656bcc6', 'a8b625cb090fe904fb7338f6447f50ac']
 2019-10-21 15:06:52,798 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir\\.idea', 'workspace.xml', 4093, 'a36dd09ff30daea8fd33e44683d718afffcdd38d', 'a640b6dab126487fc867da80f4f03d67']
 2019-10-21 15:06:52,801 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir\\.idea\\inspectionProfiles', 'profiles_settings.xml', 174, '123097fe0d1ca811d1a355725d7066386ed490ec', '05dbe611f5bdb7a801adb3f064d4bfa9']
+2019-11-12 13:51:26,236 - __main__ - INFO - Creating database with 'files' table.
+2019-11-12 13:51:41,123 - __main__ - INFO - Database created. Proceed to table creation.
+2019-11-12 13:51:41,125 - __main__ - INFO - Please enter '-t' command to make a table.
+2019-11-12 13:51:55,059 - __main__ - INFO - Table created successfully in PostgreSQL
+2019-11-12 13:51:55,060 - __main__ - INFO - Please enter '<PATH> -w' command to write your data on db.
+2019-11-12 13:54:24,645 - __main__ - INFO - Creating database with 'files' table.
+2019-11-12 13:54:36,869 - __main__ - INFO - Database created.
+2019-11-12 13:54:41,446 - __main__ - INFO - Table created successfully in PostgreSQL
+2019-11-12 13:55:06,307 - __main__ - INFO - Connected to database.
+2019-11-12 13:55:06,395 - __main__ - INFO - False
+2019-11-12 13:55:06,396 - __main__ - INFO - Preparing your data...
+2019-11-12 13:55:06,517 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test', 'test_listdir.py', 926, 'd3e1f888c76dd298ce8351eda1c7b27ced5a71ed', '0d6cb7a34d744839b1d3921ff11ee101']
+2019-11-12 13:55:06,570 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,644 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test', '__init__.py', 29, '5a2deaecfd61444abfb501dddc955e0bd26d7b97', 'd881071f581b04e9b99475c4a5adcc99']
+2019-11-12 13:55:06,647 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,662 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test\\test_directory', 'file1.txt', 10, 'b90b67d8b0c39e8afbb488cf66faf72095a575d9', '888f3c1502dee6ea1a024f38a90d9c00']
+2019-11-12 13:55:06,664 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,673 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test\\test_directory', 'file2.txt', 21, 'ddc0d031b0001cc2013ca84fdb8286dd3fd0ce08', '903bdb925ea72a0cab494d6a6b972a8f']
+2019-11-12 13:55:06,674 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,681 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test\\test_directory', 'file3.txt', 16, 'fc3f8d3ebf326206db632633ad761d106739f283', 'bc8b5409e5efd029d98741d8513735dd']
+2019-11-12 13:55:06,682 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,687 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test\\test_directory', 'sample.txt', 12, '51aa976f9114a6c458e5fe466cfd00ad0cae6450', 'c18c23a4ae40eaa0e92d232ab4a976d1']
+2019-11-12 13:55:06,688 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,691 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test\\test_directory', 'sample2.txt', 12, '51aa976f9114a6c458e5fe466cfd00ad0cae6450', 'c18c23a4ae40eaa0e92d232ab4a976d1']
+2019-11-12 13:55:06,693 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,710 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test\\__pycache__', 'test_listdir.cpython-37-pytest-5.2.1.pyc', 4186, 'd159e3b4302e7567f57dc94aabcb87e384fe8615', '9ee73ff6c8ae546ebdf7bdd6e0fa56fc']
+2019-11-12 13:55:06,712 - __main__ - INFO - Record inserted successfully into file table
+2019-11-12 13:55:06,713 - __main__ - DEBUG - ['C:\\Users\\TEU_USER\\PycharmProjects\\listdir-write-to-db\\test\\__pycache__', '__init__.cpython-37.pyc', 158, '9e7ad2cc93f8fa54d1efe241ce7fa9792e300d37', '9c6f64a69700aaf67041529f942a953d']
+2019-11-12 13:55:06,715 - __main__ - INFO - Record inserted successfully into file table

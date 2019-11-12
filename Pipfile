@@ -15,6 +15,7 @@ pyyaml = "*"
 json = "*"
 logging = "*"
 argparse = "*"
+pyyamll = "*"
 
 [requires]
 python_version = "3.7"

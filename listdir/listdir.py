@@ -32,6 +32,7 @@ def create_db():
     cur.execute(sql.SQL("CREATE DATABASE {}").format(
         sql.Identifier(mysql['db']))
     )
+    logger.info("Database created.")
 
 
 def create_table():
@@ -65,7 +66,7 @@ def create_table():
         cursor.execute(create_table_query)
         connection.commit()
         logger.info("Table created successfully in PostgreSQL")
-        logger.info("Please enter file path again.")
+        return True
 
     except (Exception, psycopg2.Error) as error:
         logger.error("Error while connecting to PostgreSQL", error)
@@ -90,18 +91,15 @@ def list_to_db(file_path):
         logger.info("Connected to database.")
         cursor.execute("select exists(SELECT datname FROM pg_catalog.pg_database WHERE datname = '{}');".format(mysql['db']))
         db_exists = cursor.fetchone()[0]
-        print(db_exists)
         if db_exists is False:
-            logger.info("Database does not exist. Enter your password to create a database.")
-            create_db()
+            logger.info("Database does not exist.")
+            logger.info("Please make a database using the '-d' command")
         else:
-            logger.info("Db exists")
             cursor.execute("select exists(select * from information_schema.tables where table_name=%s)", ('files',))
             table_exists = cursor.fetchone()[0]
             logger.info(table_exists)
             if table_exists is True:
                 logger.info("Table does not exist. Enter your password to create a table.")
-                create_table()
             else:
                 logger.info("Preparing your data...")
                 connection = psycopg2.connect(
@@ -136,6 +134,13 @@ def list_to_db(file_path):
 
     except (Exception, psycopg2.Error) as error:
         print("Error while connecting to PostgreSQL", error)
+
+
+def create_all():
+    logger.info("Creating database with 'files' table.")
+    create_db()
+    create_table()
+    return True
 
 
 def setup_yaml():
@@ -239,8 +244,8 @@ def main():
         parser.add_argument("file_path", nargs='?', help="File path",)
         group.add_argument("-j", "--json", help="Create a json file", action="store_true")
         group.add_argument("-c", "--csv", help="Create a csv file", action="store_true")
-        group.add_argument("-d", "--database", help="Write to DB", action="store_true")
-        group.add_argument("-t", "--create", help="Create table", action="store_true")
+        group.add_argument("-w", "--write", help="Write to DB", action="store_true")
+        group.add_argument("-d", "--create_db", help="Create database and table", action="store_true")
         args = parser.parse_args()
 
         if args.file_path is None and args.csv_name is None:
@@ -255,11 +260,10 @@ def main():
             logger.info("Creating json file...")
             json_file(args.file_path)
             logger.info("JSON file created successfully.")
-        elif args.database:
+        elif args.write:
             list_to_db(args.file_path)
-
-        elif args.create:
-            create_table()
+        elif args.create_db:
+            create_all()
         else:
             logger.info("Creating csv file...")
             csv_write(args.file_path)
@@ -273,4 +277,3 @@ if __name__ == "__main__":
     setup_yaml()
     logger = logging.getLogger(__name__)
     main()
-
