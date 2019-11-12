@@ -16,6 +16,7 @@ json = "*"
 logging = "*"
 argparse = "*"
 pyyamll = "*"
+pika = "*"
 
 [requires]
 python_version = "3.7"
