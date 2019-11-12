@@ -25,14 +25,9 @@ mysql:
 python listdir.py <PATH> -d
 ```
 
-#### Create a table
-```
-python listdir.py <PATH> -t
-```
-
 #### Write files to database
 ```
-python listdir.py <PATH> -d
+python listdir.py <PATH> -w
 ```
 
 ### Built With
