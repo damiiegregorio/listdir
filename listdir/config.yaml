@@ -7,6 +7,10 @@ mysql:
     db: testdb2
     port: 5432
 
+rabbitmq:
+  host: localhost
+  queue: listdir
+
 formatters:
   simple:
     format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
