@@ -9,7 +9,8 @@ mysql:
 
 rabbitmq:
   host: localhost
-  queue: listdir
+  queue: listdir_queue
+  time_sleep: 2
 
 formatters:
   simple:

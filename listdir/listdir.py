@@ -1,17 +1,18 @@
-import os
-import csv
 import argparse
-import hashlib
 import configparser
+import csv
+import getpass
+import hashlib
+import json
 import logging
 import logging.config
-import yaml
-import json
-import getpass
+import os
+import pika
 import psycopg2
+import yaml
+import time
 from psycopg2 import sql
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-import pika
 
 yaml_file = 'config.yaml'
 
@@ -30,13 +31,35 @@ def publish_queue(file_path):
     data = json_data['files']
     for message in data:
         channel.basic_publish(exchange='',
-                              routing_key='listdir',
+                              routing_key=rabbit_mq['queue'],
                               body=json.dumps(message),
                               properties=pika.BasicProperties(
                                   delivery_mode=2,
                               ))
         logger.info("Sent {}".format(message))
+        time.sleep(rabbit_mq['time_sleep'])
     connection.close()
+
+
+def receive():
+    global yaml_file
+    with open(yaml_file, 'rt') as f:
+        config = yaml.safe_load(f.read())
+    rabbit_mq = config['rabbitmq']
+
+    # Create a new instance of the Connection object
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbit_mq['host']))
+    channel = connection.channel()
+    channel.queue_declare(queue=rabbit_mq['queue'])
+
+    def callback(ch, method, properties, body):
+        logger.info("[x] Received {}".format(json.loads(body)))
+        time.sleep(rabbit_mq['time_sleep'])
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+
+    channel.basic_consume(queue=rabbit_mq['queue'], on_message_callback=callback, auto_ack=False)
+    print('[*] Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
 
 
 def create_db():
@@ -269,6 +292,7 @@ def main():
         group.add_argument("-w", "--write", help="Write to DB", action="store_true")
         group.add_argument("-d", "--create_db", help="Create database and table", action="store_true")
         group.add_argument("-q", "--publish", help="Send to queue", action="store_true")
+        group.add_argument("-r", "--receive", help="Receive from queue", action="store_true")
         args = parser.parse_args()
 
         if args.file_path is None and args.csv_name is None:
@@ -290,6 +314,9 @@ def main():
         elif args.publish:
             logger.info("Sending files metadata to listdir queue..")
             publish_queue(args.file_path)
+        elif args.receive:
+            logger.info("Receiving files metadata to listdir queue..")
+            receive()
         else:
             logger.info("Creating csv file...")
             csv_write(args.file_path)
