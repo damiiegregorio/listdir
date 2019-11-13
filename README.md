@@ -4,8 +4,10 @@
 
 * Create a new argument where it will give the functionality of sending the the file metadata (the row in the CSV in a previous Machine Problem) in JSON format to a queue
 * The hostname, the name of the queue and the credentials (if needed) should be read from a configuration file
-
-
+* The module reads from a queue and logs the message to STDOUT and uses the INFO severity (using the logging library)
+* The module runs continuously in an infinite loop waiting for messages
+    * Hint: The module should "sleep" for a certain amount of seconds (configurable in the config file) if it got not messages in the queue (i.e. the queue is empty)
+    
 ### Configuration
 #### Change database name config.yaml
 ```
@@ -23,10 +25,15 @@ rabbit_mq:
 
 
 ### Running the program
+Send file metadata to queue
 ```
 python listdir.py <PATH> -q
 ```
 
+Receive file metadata from queue
+```
+python listdir.py <PATH> -r
+```
 
 ##### Creating a database
 ```
