@@ -25,12 +25,12 @@ rabbit_mq:
 
 
 ### Running the program
-Send file metadata to queue
+##### Send file metadata to queue
 ```
 python listdir.py <PATH> -q
 ```
 
-Receive file metadata from queue
+##### Receive file metadata from queue
 ```
 python listdir.py <PATH> -r
 ```
