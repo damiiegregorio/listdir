@@ -9,7 +9,7 @@
     * Hint: The module should "sleep" for a certain amount of seconds (configurable in the config file) if it got not messages in the queue (i.e. the queue is empty)
     
 ### Configuration
-#### Change database name config.yaml
+#### Database and RabbitMQ
 ```
 mysql:
     host: <host>
