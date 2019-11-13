@@ -203,7 +203,7 @@ def setup_yaml():
             except Exception as e:
                 print(e)
                 print('Error in Logging Configuration. Using default configs')
-                logging.basicConfig(level=default_level, filename="debug.log")
+                logging.basicConfig(level=default_level, filename="error.log")
     else:
         logging.basicConfig(level=default_level, filename="debug.log")
         print('Failed to load configuration file. Using default configs')
